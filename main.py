@@ -1,4 +1,4 @@
-import pythoncom
+
 import os
 import sys
 import stat
