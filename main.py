@@ -2,8 +2,6 @@
 import os
 from flask import Flask, request, jsonify, send_file
 from yolo_func import *
-from docxtpl import DocxTemplate
-from docx2pdf import convert
 from fpdf import FPDF
 
 app = Flask(__name__)
