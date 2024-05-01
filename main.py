@@ -1,17 +1,9 @@
-import pythoncom
 import os
-import sys
-import stat
-import argparse
-import json
-import concurrent.futures
-import cv2
-import numpy as np
 from flask import Flask, request, jsonify, send_file
-from ultralytics import YOLO
 from yolo_func import *
 from docxtpl import DocxTemplate
 from docx2pdf import convert
+from fpdf import FPDF
 
 app = Flask(__name__)
 
@@ -36,15 +28,27 @@ def get_keypoints():
         return jsonify({'error': 'File type not allowed'})
 
 
+
 @app.route('/api/file', methods=['GET'])
 def get_file():
-    pythoncom.CoInitialize()
-    doc = DocxTemplate("шаблон.docx")
-    context = { 'size_of_step' : "48"}
-    doc.render(context)
-    doc.save("шаблон1.docx")
-    convert("шаблон1.docx", "шаблон-final.pdf")
-    return send_file("шаблон-final.pdf", as_attachment=True)
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.add_font("Times New Roman", "", "times.ttf", uni=True)
+    pdf.set_font("Times New Roman", size=14)
+    
+    pdf.cell(200, 10, txt="Анализ видео", ln=1, align="C")
+    pdf.cell(200, 10, txt=" ", ln=1, align="C")
+    pdf.cell(200, 10, txt="Длина шага: ", ln=1, align="L")
+
+    pdf_file_path = "simple_demo.pdf" 
+    pdf.output(pdf_file_path, 'F') 
+
+    return send_file(
+        pdf_file_path,
+        as_attachment=True,
+        download_name="simple_demo.pdf",
+        mimetype='application/pdf'
+    )
 
 # Функция для проверки разрешенных расширений файлов
 def allowed_file(filename):
