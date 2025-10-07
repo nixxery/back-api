@@ -1,4 +1,4 @@
-Django==4.2.6
+Django==5.0.2
 gunicorn==21.2.0
 whitenoise==6.6.0
 psycopg2-binary==2.9.7
@@ -65,20 +65,8 @@ tzdata==2023.3
 urllib3==2.2.1
 Werkzeug==3.0.1
 
-# Убраны Windows-зависимости:
-# comtypes==1.4.1
-# pypiwin32==223
-# pywin32==306
-
-# ML зависимости для Linux:
-torch==2.2.0+cpu
-torchvision==0.17.0+cpu
---index-url https://download.pytorch.org/whl/cpu
-
-opencv-python-headless==4.9.0.80  # Без GUI компонентов
+# ML зависимости
+torch==2.2.0
+torchvision==0.17.0
+opencv-python-headless==4.9.0.80
 ultralytics==8.1.17
-
-# Убраны ненужные для продакшена:
-# autopep8==2.0.4
-# pycodestyle==2.11.1
-# borb==2.1.22  # Может вызывать проблемы
