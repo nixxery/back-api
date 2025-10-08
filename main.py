@@ -1,13 +1,21 @@
-
 import os
 from flask import Flask, request, jsonify, send_file
+from flask_cors import CORS, cross_origin 
 from yolo_func import *
 from fpdf import FPDF
 
 app = Flask(__name__)
 
-@app.route('/api/keypoints', methods=['POST'])
+
+CORS(app) 
+
+@app.route('/api/keypoints', methods=['POST', 'OPTIONS'])
+@cross_origin() 
 def get_keypoints():
+    # Обработка preflight запроса OPTIONS
+    if request.method == 'OPTIONS':
+        return jsonify({}), 200
+        
     # Проверяем, что POST запрос содержит файл
     if 'file' not in request.files:
         return jsonify({'error': 'No file part'})
@@ -29,6 +37,7 @@ def get_keypoints():
 
 
 @app.route('/api/file', methods=['GET'])
+@cross_origin()  # ← ДОБАВИЛИ декоратор CORS
 def get_file():
     pdf = FPDF()
     pdf.add_page()
@@ -49,10 +58,21 @@ def get_file():
         mimetype='application/pdf'
     )
 
+# Health check endpoint для Render
+@app.route('/api/health', methods=['GET'])
+@cross_origin()
+def health_check():
+    return jsonify({
+        "status": "healthy", 
+        "service": "YOLO Video Analysis API",
+        "message": "Server is running correctly"
+    })
+
 # Функция для проверки разрешенных расширений файлов
 def allowed_file(filename):
     ALLOWED_EXTENSIONS = {'mp4', 'avi', 'mov'}  # Допустимые расширения файлов
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=False)  # debug=False для продакшена
